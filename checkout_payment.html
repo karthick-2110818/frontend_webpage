@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Payment</title>
+    <style>
+        .qr-code {
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Checkout</h1>
+    <p>Total Payable Amount: <span id="total-amount">₹0.00</span></p>
+
+    <div>
+        <h2>UPI Payment</h2>
+        <p>Scan this QR code to make the payment:</p>
+        <img id="qr-code" class="qr-code" src="https://via.placeholder.com/200" alt="QR Code">
+    </div>
+
+    <button onclick="confirmPayment()">Confirm Payment</button>
+
+    <script>
+        const backendURL = "https://backend-for-fyp.onrender.com";
+        let sessionID = Date.now(); // Unique session ID
+
+        // Replace with your actual GPAY UPI ID
+        const upiID = "karthickdhanaraj286@oksbi"; 
+
+        // **Fetch total amount and update UI**
+        async function fetchTotalAmount() {
+            try {
+                const response = await fetch(`${backendURL}/products`);
+                const products = await response.json();
+
+                let totalAmount = 0;
+                Object.keys(products).forEach(productName => {
+                    totalAmount += parseFloat(products[productName].price) || 0; 
+                });
+
+                document.getElementById("total-amount").textContent = `₹${totalAmount.toFixed(2)}`;
+                generateQRCode(totalAmount);
+
+            } catch (error) {
+                console.error("Error fetching total amount:", error);
+            }
+        }
+
+        // **Generate UPI QR Code**
+        function generateQRCode(amount) {
+            const merchantName = "Autonomous Checkout";
+            const txnID = `TXN${sessionID}`;
+            const qrData = `upi://pay?pa=${upiID}&pn=${merchantName}&mc=123456&tid=${txnID}&am=${amount}&cu=INR`;
+
+            document.getElementById("qr-code").src = 
+                `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrData)}`;
+        }
+
+        // **Confirm Payment (Manual Verification)**
+        function confirmPayment() {
+            alert(`Payment confirmed! Transaction ID: TXN${sessionID}`);
+            window.location.href = "thank_you.html"; 
+        }
+
+        window.onload = fetchTotalAmount;
+    </script>
+</body>
+</html>

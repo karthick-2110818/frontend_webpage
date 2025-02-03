@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Summary</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .delete-btn {
+            color: red;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Checkout Summary</h1>
+    <table id="product-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Weight (g)</th>
+                <th>Price ($)</th>
+                <th>Freshness</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Product rows will be dynamically added here -->
+        </tbody>
+    </table>
+    <button onclick="goToCheckout()">Proceed to Checkout</button>
+
+    <script>
+        const backendURL = "https://backend-for-fyp.onrender.com";
+
+        // **Set up real-time updates using SSE**
+        function setupRealtimeUpdates() {
+            const eventSource = new EventSource(`${backendURL}/stream-products`);
+
+            eventSource.onmessage = function(event) {
+                const products = JSON.parse(event.data);
+                updateProductTable(products);
+            };
+
+            eventSource.onerror = function(error) {
+                console.error("SSE connection error:", error);
+                eventSource.close();
+            };
+        }
+
+        // **Update table with real-time product data**
+        function updateProductTable(products) {
+            const tableBody = document.getElementById("product-table").getElementsByTagName("tbody")[0];
+            tableBody.innerHTML = ""; // Clear table
+
+            products.forEach(product => {
+                if (product.weight > 0 && product.price > 0) { // **Filter misdetections**
+                    const row = tableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${product.name}</td>
+                        <td>${product.weight.toFixed(2)}</td>
+                        <td>$${product.price.toFixed(2)}</td>
+                        <td>${product.freshness}</td>
+                        <td><button class="delete-btn" onclick="deleteProduct('${product.name}')">Delete</button></td>
+                    `;
+                }
+            });
+        }
+
+        // **Delete product and update UI**
+        async function deleteProduct(name) {
+            try {
+                const response = await fetch(`${backendURL}/product/${name}`, { method: "DELETE" });
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(`Product ${name} deleted`);
+                } else {
+                    alert(`Error: ${result.error}`);
+                }
+            } catch (error) {
+                console.error("Error deleting product:", error);
+            }
+        }
+
+        // **Go to checkout page**
+        function goToCheckout() {
+            window.location.href = "checkout_payment.html";
+        }
+
+        // **Initialize real-time updates on page load**
+        window.onload = setupRealtimeUpdates;
+    </script>
+</body>
+</html>
