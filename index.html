@@ -43,10 +43,15 @@
 
     <script>
         const backendURL = "https://backend-for-fyp.onrender.com";
+        let eventSource = null; // Global SSE connection
 
         // **Set up real-time updates using SSE**
         function setupRealtimeUpdates() {
-            const eventSource = new EventSource(`${backendURL}/stream-products`);
+            if (eventSource) {
+                eventSource.close(); // Close any existing connection before starting a new one
+            }
+
+            eventSource = new EventSource(`${backendURL}/stream-products`);
 
             eventSource.onmessage = function(event) {
                 const products = JSON.parse(event.data);
@@ -76,6 +81,9 @@
                     `;
                 }
             });
+
+            // **Store the latest product data in sessionStorage**
+            sessionStorage.setItem("products", JSON.stringify(products));
         }
 
         // **Delete product and update UI**
@@ -99,8 +107,11 @@
             window.location.href = "checkout_payment.html";
         }
 
-        // **Initialize real-time updates on page load**
-        window.onload = setupRealtimeUpdates;
+        // **Ensure fresh start after checkout**
+        window.onload = () => {
+            sessionStorage.removeItem("products");  // **Clear old session data**
+            setupRealtimeUpdates();  // **Start real-time updates**
+        };
     </script>
 </body>
 </html>
