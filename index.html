@@ -30,7 +30,7 @@
             <tr>
                 <th>Product</th>
                 <th>Weight (g)</th>
-                <th>Price (₹)</th> <!-- Updated to INR -->
+                <th>Price (₹)</th>
                 <th>Freshness</th>
                 <th>Action</th>
             </tr>
@@ -73,7 +73,7 @@
                     row.innerHTML = `
                         <td>${product.name}</td>
                         <td>${product.weight.toFixed(2)}</td>
-                        <td>₹${product.price.toFixed(2)}</td> <!-- Updated to INR -->
+                        <td>₹${product.price.toFixed(2)}</td>
                         <td>${product.freshness}</td>
                         <td><button class="delete-btn" onclick="deleteProduct('${product.name}')">Delete</button></td>
                     `;
@@ -103,7 +103,11 @@
         }
 
         window.onload = () => {
-            sessionStorage.removeItem("products");
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has("new_session")) {
+                sessionStorage.clear();
+                location.reload(); // Force a fresh reload if coming from checkout
+            }
             setupRealtimeUpdates();
         };
     </script>
