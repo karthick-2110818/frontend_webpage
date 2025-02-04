@@ -47,7 +47,7 @@
 
         function setupRealtimeUpdates() {
             if (eventSource) {
-                eventSource.close();
+                eventSource.close(); // Close any existing SSE connection
             }
 
             eventSource = new EventSource(`${backendURL}/stream-products`);
@@ -65,7 +65,7 @@
 
         function updateProductTable(products) {
             const tableBody = document.getElementById("product-table").getElementsByTagName("tbody")[0];
-            tableBody.innerHTML = ""; 
+            tableBody.innerHTML = ""; // Clear previous entries
 
             products.forEach(product => {
                 if (product.weight > 0 && product.price > 0) { 
@@ -104,10 +104,12 @@
 
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has("new_session")) {
-                sessionStorage.clear();
-                location.reload(); // Force a fresh reload if coming from checkout
+
+            if (urlParams.has("reset")) {
+                console.log("Resetting session...");
+                sessionStorage.removeItem("products");
             }
+
             setupRealtimeUpdates();
         };
     </script>
