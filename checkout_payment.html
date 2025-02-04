@@ -25,7 +25,6 @@
 
     <script>
         const backendURL = "https://backend-for-fyp.onrender.com";
-        let sessionID = Date.now();
         const upiID = "karthickdhanaraj286@oksbi"; 
 
         async function fetchTotalAmount() {
@@ -47,7 +46,7 @@
 
         function generateQRCode(amount) {
             const merchantName = "Autonomous Checkout";
-            const txnID = `TXN${sessionID}`;
+            const txnID = `TXN${Date.now()}`;
             const qrData = `upi://pay?pa=${upiID}&pn=${merchantName}&mc=123456&tid=${txnID}&am=${amount}&cu=INR`;
 
             document.getElementById("qr-code").src = 
@@ -55,13 +54,13 @@
         }
 
         function confirmPayment() {
-            alert(`Payment confirmed! Transaction ID: TXN${sessionID}`);
+            alert("Payment confirmed!");
 
-            // Clear session storage for fresh updates
-            sessionStorage.clear();
+            // Clear session storage before returning
+            sessionStorage.removeItem("products");
 
-            // Redirect to index.html and force a reload to restart updates
-            window.location.href = "index.html?new_session=true";
+            // Redirect back to index.html and ensure new updates start
+            window.location.href = "index.html?reset=true";
         }
 
         window.onload = fetchTotalAmount;
