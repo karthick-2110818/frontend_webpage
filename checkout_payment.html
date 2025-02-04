@@ -13,7 +13,7 @@
 </head>
 <body>
     <h1>Checkout</h1>
-    <p>Total Payable Amount: <span id="total-amount">?0.00</span></p>
+    <p>Total Payable Amount: <span id="total-amount">₹0.00</span></p> <!-- Updated to INR -->
 
     <div>
         <h2>UPI Payment</h2>
@@ -25,7 +25,7 @@
 
     <script>
         const backendURL = "https://backend-for-fyp.onrender.com";
-        let sessionID = Date.now(); // Unique session ID
+        let sessionID = Date.now();
         const upiID = "karthickdhanaraj286@oksbi"; 
 
         async function fetchTotalAmount() {
@@ -38,7 +38,7 @@
                     totalAmount += parseFloat(product.price) || 0;
                 });
 
-                document.getElementById("total-amount").textContent = `?${totalAmount.toFixed(2)}`;
+                document.getElementById("total-amount").textContent = `₹${totalAmount.toFixed(2)}`; <!-- Updated to INR -->
                 generateQRCode(totalAmount);
             } catch (error) {
                 console.error("Error fetching total amount:", error);
@@ -57,10 +57,8 @@
         function confirmPayment() {
             alert(`Payment confirmed! Transaction ID: TXN${sessionID}`);
 
-            // **Clear stored product session before redirecting**
             localStorage.removeItem("products");
 
-            // **Redirect to Product Summary Page**
             window.location.href = "index.html"; 
         }
 
