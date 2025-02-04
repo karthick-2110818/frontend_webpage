@@ -30,7 +30,7 @@
             <tr>
                 <th>Product</th>
                 <th>Weight (g)</th>
-                <th>Price ($)</th>
+                <th>Price (₹)</th> <!-- Updated to INR -->
                 <th>Freshness</th>
                 <th>Action</th>
             </tr>
@@ -43,12 +43,11 @@
 
     <script>
         const backendURL = "https://backend-for-fyp.onrender.com";
-        let eventSource = null; // Global SSE connection
+        let eventSource = null;
 
-        // **Set up real-time updates using SSE**
         function setupRealtimeUpdates() {
             if (eventSource) {
-                eventSource.close(); // Close any existing connection before starting a new one
+                eventSource.close();
             }
 
             eventSource = new EventSource(`${backendURL}/stream-products`);
@@ -64,29 +63,26 @@
             };
         }
 
-        // **Update table with real-time product data**
         function updateProductTable(products) {
             const tableBody = document.getElementById("product-table").getElementsByTagName("tbody")[0];
-            tableBody.innerHTML = ""; // Clear table
+            tableBody.innerHTML = ""; 
 
             products.forEach(product => {
-                if (product.weight > 0 && product.price > 0) { // **Filter misdetections**
+                if (product.weight > 0 && product.price > 0) { 
                     const row = tableBody.insertRow();
                     row.innerHTML = `
                         <td>${product.name}</td>
                         <td>${product.weight.toFixed(2)}</td>
-                        <td>$${product.price.toFixed(2)}</td>
+                        <td>₹${product.price.toFixed(2)}</td> <!-- Updated to INR -->
                         <td>${product.freshness}</td>
                         <td><button class="delete-btn" onclick="deleteProduct('${product.name}')">Delete</button></td>
                     `;
                 }
             });
 
-            // **Store the latest product data in sessionStorage**
             sessionStorage.setItem("products", JSON.stringify(products));
         }
 
-        // **Delete product and update UI**
         async function deleteProduct(name) {
             try {
                 const response = await fetch(`${backendURL}/product/${name}`, { method: "DELETE" });
@@ -102,15 +98,13 @@
             }
         }
 
-        // **Go to checkout page**
         function goToCheckout() {
             window.location.href = "checkout_payment.html";
         }
 
-        // **Ensure fresh start after checkout**
         window.onload = () => {
-            sessionStorage.removeItem("products");  // **Clear old session data**
-            setupRealtimeUpdates();  // **Start real-time updates**
+            sessionStorage.removeItem("products");
+            setupRealtimeUpdates();
         };
     </script>
 </body>
