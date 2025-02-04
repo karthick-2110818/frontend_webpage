@@ -13,7 +13,7 @@
 </head>
 <body>
     <h1>Checkout</h1>
-    <p>Total Payable Amount: <span id="total-amount">₹0.00</span></p> <!-- Updated to INR -->
+    <p>Total Payable Amount: <span id="total-amount">₹0.00</span></p>
 
     <div>
         <h2>UPI Payment</h2>
@@ -38,7 +38,7 @@
                     totalAmount += parseFloat(product.price) || 0;
                 });
 
-                document.getElementById("total-amount").textContent = `₹${totalAmount.toFixed(2)}`; <!-- Updated to INR -->
+                document.getElementById("total-amount").textContent = `₹${totalAmount.toFixed(2)}`;
                 generateQRCode(totalAmount);
             } catch (error) {
                 console.error("Error fetching total amount:", error);
@@ -57,9 +57,11 @@
         function confirmPayment() {
             alert(`Payment confirmed! Transaction ID: TXN${sessionID}`);
 
-            localStorage.removeItem("products");
+            // Clear session storage for fresh updates
+            sessionStorage.clear();
 
-            window.location.href = "index.html"; 
+            // Redirect to index.html and force a reload to restart updates
+            window.location.href = "index.html?new_session=true";
         }
 
         window.onload = fetchTotalAmount;
