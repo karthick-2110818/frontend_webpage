@@ -62,7 +62,7 @@
         // **Confirm Payment (Manual Verification)**
         function confirmPayment() {
             alert(`Payment confirmed! Transaction ID: TXN${sessionID}`);
-            window.location.href = "thank_you.html"; 
+            window.location.reload(); // Refresh the checkout page for the next customer
         }
 
         window.onload = fetchTotalAmount;
