@@ -5,15 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout Summary</title>
     <style>
+        body {
+            background-color: #1e3a46; /* Classy Dark Teal */
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            color: #fff;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .logo {
+            width: 150px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #1e3a46;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 10px;
         }
+
         th, td {
             padding: 10px;
             text-align: left;
             border: 1px solid #ddd;
+            color: #333;
         }
+
+        th {
+            background-color: #f5f5f5;
+        }
+
         .delete-btn {
             color: red;
             cursor: pointer;
@@ -21,25 +61,46 @@
             border: none;
             font-size: 16px;
         }
+
+        .checkout-btn {
+            background: #ff6f00;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .checkout-btn:hover {
+            background: #e65c00;
+        }
     </style>
 </head>
 <body>
-    <h1>Checkout Summary</h1>
-    <table id="product-table">
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Weight (g)</th>
-                <th>Price (₹)</th>
-                <th>Freshness</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Product rows will be dynamically added here -->
-        </tbody>
-    </table>
-    <button onclick="goToCheckout()">Proceed to Checkout</button>
+
+    <img src="logo.png" alt="Fast Store Logo" class="logo"> <!-- Add your logo -->
+    <h2>Fast Store Autonomous Checkout System</h2>
+
+    <div class="container">
+        <h1>Checkout Summary</h1>
+        <table id="product-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Weight (g)</th>
+                    <th>Price (₹)</th>
+                    <th>Freshness</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Product rows will be dynamically added here -->
+            </tbody>
+        </table>
+        <button class="checkout-btn" onclick="goToCheckout()">Proceed to Checkout</button>
+    </div>
 
     <script>
         const backendURL = "https://backend-for-fyp.onrender.com";
@@ -47,7 +108,7 @@
 
         function setupRealtimeUpdates() {
             if (eventSource) {
-                eventSource.close(); // Close any existing SSE connection
+                eventSource.close(); 
             }
 
             eventSource = new EventSource(`${backendURL}/stream-products`);
@@ -65,7 +126,7 @@
 
         function updateProductTable(products) {
             const tableBody = document.getElementById("product-table").getElementsByTagName("tbody")[0];
-            tableBody.innerHTML = ""; // Clear previous entries
+            tableBody.innerHTML = ""; 
 
             products.forEach(product => {
                 if (product.weight > 0 && product.price > 0) { 
