@@ -28,6 +28,14 @@
             width: 350px;
         }
 
+        /* Timer Display */
+        .timer {
+            font-size: 18px;
+            font-weight: bold;
+            color: red;
+            margin-bottom: 10px;
+        }
+
         /* QR code */
         .qr-code {
             width: 200px;
@@ -57,6 +65,8 @@
 <body>
 
     <div class="checkout-box">
+        <div class="timer">Time Left: <span id="countdown">07:00</span></div>
+        
         <h1>Checkout</h1>
         <p>Total Payable Amount: <strong id="total-amount">₹0.00</strong></p>
 
@@ -72,6 +82,25 @@
     <script>
         const backendURL = "https://backend-for-fyp.onrender.com";
         const upiID = "karthickdhanaraj286@oksbi"; 
+
+        let countdownTimer;
+        let timeLeft = 7 * 60; // 7 minutes in seconds
+
+        function startCountdown() {
+            countdownTimer = setInterval(() => {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                document.getElementById("countdown").textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (timeLeft === 0) {
+                    clearInterval(countdownTimer);
+                    alert("Time expired! Redirecting to summary page.");
+                    window.location.href = "index.html";
+                }
+                timeLeft--;
+            }, 1000);
+        }
 
         async function fetchTotalAmount() {
             try {
@@ -100,12 +129,16 @@
         }
 
         function confirmPayment() {
+            clearInterval(countdownTimer); // Stop the timer
             alert("Payment confirmed!");
             sessionStorage.removeItem("products");
             window.location.href = "index.html?reset=true";
         }
 
-        window.onload = fetchTotalAmount;
+        window.onload = function() {
+            fetchTotalAmount();
+            startCountdown(); // Start the countdown when the page loads
+        };
     </script>
 
 </body>
